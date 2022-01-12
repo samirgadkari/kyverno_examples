@@ -1,0 +1,23 @@
+apiVersion: kyberno.io/v1
+kind: Policy
+metadata:
+  name: require-pod-requests-and-limits
+  namespace: production
+spec:
+  validationFailureAction: enforce
+  rules:
+  - name: validate-resource-limits
+    match:
+      resources:
+        kinds:
+        - Pod
+    validate:
+      message: "Pod limits are required in this namespace with a max of 200m of CPU and
+        1Gi of memory."
+      pattern:
+        spec:
+          containers:
+          - resources:
+            limits:
+              memory: "<=1Gi"
+              cpu:    "<=200m"
