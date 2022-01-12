@@ -1,0 +1,32 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy         # Kyverno policies can be scoped to the cluster (kind: ClusterPolicy)
+                            # or a namespace (just kind: Policy).
+metadata:
+  name: require-labels
+spec:
+  validationFailureAction: enforce  # enforce => reject pod creation if this label does not exist
+                                    #            in the request.
+                                    # audit   => this pod will be created, but will be entered
+                                    #            into the PolicyReport object which lists
+                                    #            resources that passed/failed validation.
+                                    #            Useful when evaluating new policies to see what
+                                    #            will happen when the policy is added.
+  rules:
+  - name: require-labels
+    match:                # Each rule contains a match statement to select any type of resources.
+                          # Add a exclude statement to futher remove any of those 
+                          # selected resources. You can combine various clauses in match/exclude
+                          # to get down to the fine levels you need.
+      resources:
+        kinds:
+        - Pod           # Match on the Pod resource. So we're looking at all Pods.
+    validate:               # Act on selected resources - can be validate/mutate/generate.
+      message: "The label `app.kubernetes.io/name` is required"  # Display on invalid 
+                                                                 # Pod creation request.
+      pattern:              # Pattern is what we want to validate.
+        metadata:
+          labels:           # Here, we want to validate the label.
+            app.kubernetes.io/name: "?*"  # There must be a label with key 
+                                          # 'app.kubernetes.io/name' and any value.
+
+
