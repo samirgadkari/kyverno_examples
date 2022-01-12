@@ -30,3 +30,10 @@ spec:
                                           # 'app.kubernetes.io/name' and any value.
 
 
+# Create this Cluster Policy
+#   kubectl create -f this_filename.yaml
+# Deploy nginx without a label
+#   kubectl create deployment nginx --image=nginx
+# This will show an error. Now run nginx with the required label
+#   kubectl run nginx --image nginx --labels app.kubernetes.io/name=nginx
+# This will run and create the nginx resource.
